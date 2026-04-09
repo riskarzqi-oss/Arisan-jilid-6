@@ -382,18 +382,7 @@ function validate(){
 // storage
 const KEY='arisan_kaya_raya_jilid6';
 function getE(){try{return JSON.parse(localStorage.getItem(KEY)||'[]');}catch{return[];}}
-function saveE(e){const a=getE();a.push(e);localStorage.setItem(KEY,JSON.stringify(a));updateBadge();}
-
-// Google Sheets URL - isi setelah setup Apps Script
-var SHEET_URL = https://script.google.com/macros/s/AKfycbxZLbTAWpvi_mQ0WfSbnlZkTZ4iId_unTbdVCsgJBPhnf6mJGiQEST7K8OH-7aDHeuT/exec
-
-async function sendToSheet(entry){
-  if(!SHEET_URL || SHEET_URL==='PASTE_URL_DISINI') return;
-  try{
-    await fetch(SHEET_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(entry)});
-  }catch(err){ console.warn('Gagal kirim ke Sheet:', err); }
-}
-
+function saveE(e){const a=getE();a.push(e);localStorage.setItem(KEY,JSON.stringify(a));
 // ── Password for Excel export ──
 const EXCEL_PASSWORD = 'arisan2026'; // <-- GANTI PASSWORD DI SINI
 
@@ -511,9 +500,7 @@ function handleSubmit(){
     const now=new Date();
     const tanggal=now.toLocaleString('id-ID',{day:'numeric',month:'long',year:'numeric',hour:'2-digit',minute:'2-digit'});
     const entry={tanggal,nama:document.getElementById('nama').value.trim(),unit:document.getElementById('unit').value.trim(),nohp:document.getElementById('nohp').value.trim(),alamat:document.getElementById('alamat').value.trim(),namaWali:document.getElementById('namaWali').value.trim(),hpWali:document.getElementById('hpWali').value.trim(),alamatWali:document.getElementById('alamatWali').value.trim()};
-    saveE(entry);
-    sendToSheet(entry);
-    generatePDF(entry);
+    saveE(entry);generatePDF(entry);
     document.getElementById('fContent').style.display='none';
     document.getElementById('succPanel').classList.add('show');
     document.getElementById('dlBtn').onclick=()=>pdfData.save('Form_ArisanKayaRaya_Jilid6_'+entry.nama.replace(/\s+/g,'_')+'.pdf');
