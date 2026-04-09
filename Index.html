@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Arisan Kaya Raya YTTA Jilid 6</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Raleway:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+:root{
+  --g1:#0A2E10;--g2:#1A7A2E;--g3:#25A63E;--g4:#52C96A;--g5:#D4F5DA;
+  --dark:#060F08;--dark2:#0D2410;--dark3:#163D1C;
+  --mid:#1E5C28;--cream:#F0FBF2;--cream2:#D4F0DA;--cream3:#9ED4A8;
+  --err:#C02020;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--dark);font-family:'Raleway',sans-serif;font-weight:300;color:var(--dark);min-height:100vh;overflow-x:hidden;}
+
+/* floating $ */
+.fbg{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;}
+.fbg span{position:absolute;font-family:'Playfair Display',serif;font-weight:900;color:rgba(37,166,62,0.07);animation:floatUp linear infinite;}
+@keyframes floatUp{0%{transform:translateY(0) rotate(-8deg);opacity:0;}10%{opacity:1;}90%{opacity:1;}100%{transform:translateY(-110vh) rotate(8deg);opacity:0;}}
+
+/* hero */
+.hero{background:linear-gradient(170deg,#060F08 0%,#0D2410 45%,#163D1C 75%,#060F08 100%);padding:58px 24px 48px;text-align:center;position:relative;overflow:hidden;z-index:1;}
+.hero-glow{position:absolute;inset:0;background:radial-gradient(ellipse 70% 50% at 50% 0%,rgba(37,166,62,0.22) 0%,transparent 70%);pointer-events:none;}
+.hero-drow{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:12px;}
+.hero-drow .hl{width:44px;height:1px;background:linear-gradient(to right,transparent,var(--g3),transparent);}
+.hero-drow .bd{font-family:'Playfair Display',serif;font-size:28px;font-weight:900;color:var(--g3);animation:glow 2s ease-in-out infinite;}
+@keyframes glow{0%,100%{text-shadow:0 0 16px rgba(37,166,62,.5);}50%{text-shadow:0 0 36px rgba(82,201,106,.85),0 0 56px rgba(37,166,62,.4);}}
+.eyebrow{font-size:9px;letter-spacing:5px;color:var(--g4);text-transform:uppercase;font-weight:600;margin-bottom:14px;}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(24px,5.5vw,50px);font-weight:900;color:#E8FFF0;line-height:1.15;letter-spacing:1px;text-shadow:0 2px 28px rgba(37,166,62,.35);}
+.hero h1 em{font-style:italic;color:var(--g4);display:block;font-size:0.62em;font-weight:400;letter-spacing:4px;margin-top:6px;}
+.hero-div{display:flex;align-items:center;justify-content:center;gap:14px;margin:20px auto;max-width:280px;}
+.hero-div .hl2{flex:1;height:1px;background:linear-gradient(to right,transparent,var(--g1));}
+.hero-div .hl2.r{background:linear-gradient(to left,transparent,var(--g1));}
+.hero-div .ds{font-size:18px;color:var(--g3);font-family:'Playfair Display',serif;font-weight:900;}
+.hero-sub{font-size:11px;letter-spacing:2.5px;color:#85C98A;text-transform:uppercase;}
+
+/* container */
+.wrap{max-width:700px;margin:0 auto;padding:36px 20px 100px;position:relative;z-index:1;}
+
+/* card */
+.card{background:var(--cream);border:1px solid var(--cream3);box-shadow:0 0 0 1px rgba(37,166,62,.1),0 24px 60px rgba(0,0,0,.55);padding:0 0 32px;position:relative;}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--g1),var(--g2),var(--g3),var(--g4),var(--g3),var(--g2),var(--g1));}
+.card::after{content:'$  $  $  $  $  $  $  $  $  $  $  $  $  $  $  $  $  $  $  $  $  $';position:absolute;top:8px;left:0;right:0;font-family:'Playfair Display',serif;font-size:11px;font-weight:900;color:rgba(37,166,62,.1);text-align:center;letter-spacing:4px;pointer-events:none;overflow:hidden;white-space:nowrap;}
+.inner{padding:32px 36px 0;}
+
+/* section */
+.sec{display:flex;align-items:center;gap:10px;margin:30px 0 18px;}
+.sec-d{font-family:'Playfair Display',serif;font-size:20px;font-weight:900;color:var(--g2);line-height:1;}
+.sec-lbl{font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:var(--dark2);letter-spacing:.5px;}
+.sec-line{flex:1;height:1px;background:linear-gradient(to right,var(--cream3),transparent);}
+
+/* fields */
+.field{margin-bottom:22px;}
+.field label{display:block;font-size:9px;letter-spacing:2.5px;text-transform:uppercase;color:var(--mid);margin-bottom:7px;font-weight:700;}
+.field label .req{color:var(--g2);margin-left:3px;}
+.field .hint{font-size:11px;color:#3A8A44;margin-bottom:7px;font-style:italic;}
+.field input,.field textarea{width:100%;background:transparent;border:none;border-bottom:1.5px solid var(--cream3);padding:10px 0;font-family:'Raleway',sans-serif;font-size:15px;font-weight:400;color:var(--dark);outline:none;transition:border-color .25s;resize:none;}
+.field input:focus,.field textarea:focus{border-bottom-color:var(--g3);}
+.field input.err,.field textarea.err{border-bottom-color:var(--err);}
+.ferr{font-size:11px;color:var(--err);margin-top:4px;display:none;}
+.field.has-error .ferr{display:block;}
+
+/* wali card */
+.wali-card{background:white;border:1px solid var(--cream2);border-left:3px solid var(--g3);padding:24px 24px 8px;margin-top:4px;box-shadow:0 2px 12px rgba(13,74,26,.07);}
+
+/* tnc */
+.tnc-box{background:white;border:1px solid var(--cream2);border-left:3px solid var(--g3);padding:22px 24px;margin:8px 0 20px;max-height:260px;overflow-y:auto;}
+.tnc-box::-webkit-scrollbar{width:4px;}.tnc-box::-webkit-scrollbar-track{background:var(--cream2);}.tnc-box::-webkit-scrollbar-thumb{background:var(--g1);}
+.tnc-box h3{font-family:'Playfair Display',serif;font-size:14px;font-weight:700;color:var(--g2);margin-bottom:14px;}
+.tnc-box ol{padding-left:18px;}
+.tnc-box li{font-size:12px;line-height:1.8;color:#1A3A1E;margin-bottom:10px;}
+.tnc-box li em{font-style:italic;color:#3A7A42;}
+
+/* checkbox */
+#agreeCheck{display:none;}
+.agree-wrap{background:linear-gradient(135deg,#EBF8EE,#D4F0DA);border:1.5px solid var(--cream3);padding:18px;cursor:pointer;margin-top:8px;transition:background .2s;}
+.agree-wrap:hover{background:linear-gradient(135deg,#D4F0DA,#BEE8C6);}
+.agree-inner{display:flex;align-items:flex-start;gap:12px;}
+.chkbox{width:20px;height:20px;min-width:20px;border:1.5px solid var(--g3);background:white;display:flex;align-items:center;justify-content:center;transition:all .2s;margin-top:2px;}
+.chkbox svg{display:none;}
+#agreeCheck:checked~.agree-wrap .chkbox{background:var(--g2);border-color:var(--g2);}
+#agreeCheck:checked~.agree-wrap .chkbox svg{display:block;}
+.agree-text{font-size:13px;line-height:1.7;color:var(--mid);}
+.agree-text strong{display:block;font-size:9px;letter-spacing:2.5px;text-transform:uppercase;color:var(--g2);margin-bottom:4px;font-weight:700;}
+
+/* sig pad */
+.spw{border:1.5px solid var(--cream3);background:white;position:relative;}
+.spw canvas{display:block;width:100%;height:160px;cursor:crosshair;touch-action:none;}
+.stb{display:flex;justify-content:space-between;align-items:center;padding:7px 12px;border-top:1px solid var(--cream2);background:#EBF8EE;}
+.stb span{font-size:10px;color:#3A8A44;letter-spacing:1px;}
+.scl{background:none;border:1px solid var(--cream3);color:var(--mid);padding:4px 14px;font-family:'Raleway',sans-serif;font-size:9px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;}
+.scl:hover{border-color:var(--err);color:var(--err);}
+.shint{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:14px;color:#A8DFB0;font-style:italic;pointer-events:none;font-family:'Playfair Display',serif;}
+
+/* submit */
+.btn-sub{display:block;width:calc(100% - 72px);margin:32px 36px 0;padding:18px;border:none;cursor:pointer;background:linear-gradient(135deg,var(--g1),var(--g2),var(--g3),var(--g4),var(--g3),var(--g2));background-size:300% 300%;animation:mShimmer 3s ease infinite;color:white;font-family:'Raleway',sans-serif;font-size:11px;font-weight:700;letter-spacing:4px;text-transform:uppercase;box-shadow:0 4px 24px rgba(26,122,46,.4);transition:transform .2s,box-shadow .2s;position:relative;}
+@keyframes mShimmer{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+.btn-sub::before{content:'$';position:absolute;left:18px;top:50%;transform:translateY(-50%);font-family:'Playfair Display',serif;font-size:20px;font-weight:900;opacity:.35;}
+.btn-sub::after{content:'$';position:absolute;right:18px;top:50%;transform:translateY(-50%);font-family:'Playfair Display',serif;font-size:20px;font-weight:900;opacity:.35;}
+.btn-sub:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(37,166,62,.5);}
+.btn-sub:disabled{opacity:.6;cursor:not-allowed;transform:none;animation:none;}
+
+/* success */
+.succ{display:none;text-align:center;padding:60px 24px;animation:fadeUp .5s ease;}
+.succ.show{display:block;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+.succ-ico{font-size:52px;margin-bottom:10px;animation:bounce .8s ease;}
+@keyframes bounce{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
+.succ h2{font-family:'Playfair Display',serif;font-size:32px;font-weight:900;color:var(--g4);margin-bottom:10px;text-shadow:0 2px 20px rgba(82,201,106,.4);}
+.succ p{font-size:14px;color:#85C98A;line-height:1.7;margin-bottom:28px;}
+.btn-dl{display:inline-block;padding:14px 32px;background:linear-gradient(135deg,var(--g1),var(--g3));color:white;border:none;cursor:pointer;font-family:'Raleway',sans-serif;font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;box-shadow:0 4px 16px rgba(26,122,46,.4);transition:all .2s;margin:4px;}
+.btn-dl:hover{transform:translateY(-1px);box-shadow:0 6px 22px rgba(37,166,62,.5);}
+.btn-dl.sec{background:var(--mid);}
+
+/* admin fab */
+.fab{position:fixed;bottom:24px;right:24px;background:linear-gradient(135deg,var(--dark2),var(--dark3));color:var(--g4);border:1px solid var(--g1);padding:11px 18px;font-family:'Raleway',sans-serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;z-index:100;display:flex;align-items:center;gap:8px;box-shadow:0 4px 20px rgba(0,0,0,.5);transition:all .2s;}
+.fab:hover{background:linear-gradient(135deg,#163D1C,#1E5C28);}
+.fab .badge{background:var(--g3);color:white;border-radius:50%;width:18px;height:18px;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;}
+
+/* admin modal */
+.overlay{display:none;position:fixed;inset:0;background:rgba(2,8,3,.88);z-index:200;align-items:center;justify-content:center;padding:16px;}
+.overlay.open{display:flex;}
+.modal{background:var(--cream);width:100%;max-width:1000px;max-height:90vh;display:flex;flex-direction:column;border-top:4px solid var(--g3);box-shadow:0 24px 80px rgba(0,0,0,.7);}
+.mhdr{background:linear-gradient(135deg,var(--dark2),var(--dark3));padding:18px 24px;display:flex;align-items:center;justify-content:space-between;}
+.mhdr h2{font-family:'Playfair Display',serif;font-size:18px;color:#E8FFF0;font-weight:700;}
+.mhdr .cnt{font-size:11px;color:#85C98A;margin-top:3px;}
+.mcl{background:none;border:none;color:var(--g4);font-size:22px;cursor:pointer;}
+.mact{padding:14px 24px;display:flex;gap:10px;flex-wrap:wrap;border-bottom:1px solid var(--cream2);background:white;}
+.bxl{padding:10px 22px;background:#1D6F42;color:white;border:none;font-family:'Raleway',sans-serif;font-size:9px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;font-weight:700;}
+.bxl:hover{background:#155231;}
+.bdel{padding:10px 22px;background:transparent;color:var(--err);border:1px solid var(--err);font-family:'Raleway',sans-serif;font-size:9px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;font-weight:700;}
+.tw{overflow:auto;flex:1;padding:20px 24px;}
+.dt{width:100%;border-collapse:collapse;font-size:12px;}
+.dt th{background:var(--dark2);color:#E8FFF0;padding:10px 12px;text-align:left;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;white-space:nowrap;}
+.dt td{padding:10px 12px;border-bottom:1px solid var(--cream2);vertical-align:top;}
+.dt tr:nth-child(even) td{background:#EBF8EE;}
+.dt tr:hover td{background:#D4F0DA;}
+.empty{text-align:center;padding:48px;color:#4A9A54;font-style:italic;font-size:14px;}
+
+@media(max-width:600px){.inner{padding:24px 18px 0;}.btn-sub{width:calc(100% - 36px);margin-left:18px;margin-right:18px;}}
+
+/* password modal */
+.pw-overlay{display:none;position:fixed;inset:0;background:rgba(2,8,3,.92);z-index:300;align-items:center;justify-content:center;padding:16px;}
+.pw-overlay.open{display:flex;}
+.pw-box{background:var(--cream);max-width:360px;width:100%;border-top:4px solid var(--g3);box-shadow:0 20px 60px rgba(0,0,0,.7);padding:36px 32px 28px;text-align:center;}
+.pw-box .pw-icon{font-size:36px;margin-bottom:12px;}
+.pw-box h3{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--dark2);margin-bottom:6px;}
+.pw-box p{font-size:12px;color:var(--mid);margin-bottom:20px;line-height:1.6;}
+.pw-input-wrap{position:relative;margin-bottom:6px;}
+.pw-input-wrap input{width:100%;border:1.5px solid var(--cream3);border-radius:0;padding:12px 42px 12px 14px;font-family:'Raleway',sans-serif;font-size:15px;outline:none;transition:border-color .2s;background:white;}
+.pw-input-wrap input:focus{border-color:var(--g3);}
+.pw-input-wrap input.pw-err{border-color:var(--err);}
+.pw-toggle{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--mid);font-size:16px;padding:0;}
+.pw-error{font-size:11px;color:var(--err);margin-bottom:14px;display:none;text-align:left;}
+.pw-error.show{display:block;}
+.pw-btns{display:flex;gap:10px;}
+.pw-ok{flex:1;padding:12px;background:linear-gradient(135deg,var(--g1),var(--g3));color:white;border:none;font-family:'Raleway',sans-serif;font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;cursor:pointer;transition:all .2s;}
+.pw-ok:hover{opacity:.9;}
+.pw-cancel{padding:12px 18px;background:transparent;color:var(--mid);border:1px solid var(--cream3);font-family:'Raleway',sans-serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;}
+.pw-cancel:hover{border-color:var(--err);color:var(--err);}
+</style>
+</head>
+<body>
+
+<div class="fbg" id="fbg"></div>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-glow"></div>
+  <div class="eyebrow">Formulir Keikutsertaan</div>
+  <div class="hero-drow">
+    <div class="hl"></div><div class="bd">$</div>
+    <div class="hl"></div><div class="bd">$</div>
+    <div class="hl"></div><div class="bd">$</div>
+    <div class="hl"></div>
+  </div>
+  <h1>Arisan Kaya Raya YTTA<em>Jilid &nbsp; 6</em></h1>
+  <div class="hero-div">
+    <div class="hl2"></div><div class="ds">$</div><div class="hl2 r"></div>
+  </div>
+  <div class="hero-sub">PT GMF AeroAsia Tbk &nbsp;·&nbsp; April 2026 – November 2027</div>
+</div>
+
+<div class="wrap">
+
+  <!-- SUCCESS -->
+  <div class="succ" id="succPanel">
+    <div class="succ-ico">💵💵💵</div>
+    <h2>Selamat, Kamu Resmi Kaya!</h2>
+    <p>Formulir berhasil diisi. PDF siap diunduh &amp; ditandatangani.<br>Data tersimpan otomatis.</p>
+    <button class="btn-dl" id="dlBtn">⬇ Unduh PDF untuk Ditandatangani</button><br>
+    <button class="btn-dl sec" style="margin-top:8px;" onclick="resetForm()">← Isi Formulir Lagi</button>
+  </div>
+
+  <!-- FORM -->
+  <div id="fContent">
+  <div class="card">
+  <div class="inner">
+
+    <div class="sec"><div class="sec-d">$</div><div class="sec-lbl">Data Diri Peserta</div><div class="sec-line"></div></div>
+
+    <div class="field" id="f-nama">
+      <label>Nama Lengkap <span class="req">*</span></label>
+      <input type="text" id="nama" placeholder="Nama lengkap Anda">
+      <div class="ferr">Nama wajib diisi.</div>
+    </div>
+
+    <div class="field" id="f-unit">
+      <label>Unit <span class="req">*</span></label>
+      <div class="hint">Contoh: TMS - 2 &nbsp;|&nbsp; Ex pegawai GMF: EX - GMF</div>
+      <input type="text" id="unit" placeholder="Contoh: TMS - 2 / EX - GMF">
+      <div class="ferr">Unit wajib diisi.</div>
+    </div>
+
+    <div class="field" id="f-nohp">
+      <label>No. HP <span class="req">*</span></label>
+      <input type="tel" id="nohp" placeholder="08xx-xxxx-xxxx">
+      <div class="ferr">No. HP wajib diisi.</div>
+    </div>
+
+    <div class="field" id="f-alamat">
+      <label>Alamat <span class="req">*</span></label>
+      <textarea id="alamat" rows="2" placeholder="Alamat lengkap peserta"></textarea>
+      <div class="ferr">Alamat wajib diisi.</div>
+    </div>
+
+    <div class="sec"><div class="sec-d">$</div><div class="sec-lbl">Data Anggota Keluarga / Wali</div><div class="sec-line"></div></div>
+
+    <div class="wali-card">
+      <div class="field" id="f-namaWali">
+        <label>Nama &amp; Status Hubungan Keluarga <span class="req">*</span></label>
+        <input type="text" id="namaWali" placeholder="Contoh: Budi Santoso (Suami)">
+        <div class="ferr">Nama &amp; status wali wajib diisi.</div>
+      </div>
+      <div class="field" id="f-hpWali">
+        <label>Nomor HP Wali <span class="req">*</span></label>
+        <input type="tel" id="hpWali" placeholder="08xx-xxxx-xxxx">
+        <div class="ferr">Nomor HP wali wajib diisi.</div>
+      </div>
+      <div class="field" style="margin-bottom:0">
+        <label>Alamat Wali</label>
+        <textarea id="alamatWali" rows="2" placeholder="Alamat lengkap wali (opsional)"></textarea>
+      </div>
+    </div>
+
+    <div class="sec" style="margin-top:28px;"><div class="sec-d">$</div><div class="sec-lbl">Terms &amp; Conditions</div><div class="sec-line"></div></div>
+
+    <div class="tnc-box">
+      <h3>Terms and Condition Arisan Kaya Raya YTTA Jilid 6</h3>
+      <ol>
+        <li>Periode arisan akan berjalan selama periode April 2026 - November 2027 dengan ketentuan jumlah pembayaran IDR 1.000.000 per akun arisan dan jadwal pemenang sesuai dengan hasil yg telah disepakati pada saat penentuan jadwal arisan yang akan dilakukan secara online.</li>
+        <li>Peserta setuju untuk tidak dapat berhenti ditengah periode arisan. Apabila terjadi hal - hal yang tidak bisa dihindari seperti meninggal, cacat tidak bisa bekerja, sakit hingga tidak sadar dll, maka peserta setuju untuk mengalihkan arisan ini kepada anggota keluarga yang telah ditunjuk sebagai wali untuk membahas kelanjutan arisan ini, dan anggota keluarga yang ditunjuk sudah dianggap terinformasi dan paham atas terms and condition yang telah disepakati pada arisan ini.</li>
+        <li>Deadline transfer arisan ke akun admin 1 an Chintya Widyaning Putri Utami BNI 0239667122 (akan diinfokan apabila ada perubahan) adalah H+1 dari Gajian PT GMF AeroAsia Tbk dengan mengirimkan bukti transfer ke WA grup. Admin akan memberikan reminder apabila jumlah yang belum transfer arisan sebelum deadline transfer &lt; 6 orang.</li>
+        <li>Deadline transfer arisan kepada pemenang selambat-lambatnya H+2 dari tanggal Gajian PT GMF AeroAsia Tbk dan admin akan mengkonfirmasi no.rek transfer kepada masing-masing pemenang.</li>
+        <li>Apabila ada perubahan jadwal pemenang, diperbolehkan asal disetujui oleh kedua belah pihak. <em>(Contoh: A dijadwalkan menang pada bulan September 2026, B dijadwalkan menang pada bulan Januari 2027 apabila B ingin menukar jadwal untuk menang arisan dengan A maka dapat disepakati dengan A dan diinfokan ke admin.)</em></li>
+        <li>Apabila transfer pemenang arisan diluar rekening BNI maka terdapat potongan biaya admin dengan estimasi IDR 2.500 - IDR 6.500 (tergantung ada BIFAST, atau tidak) dan akan diinfokan kepada pemenang bulan berjalan sebelum uang ditransfer. (1 Bulan 4 Pemenang, @IDR 20.000.000)</li>
+        <li>Apabila ada peserta yang resign dari PT GMF AeroAsia Tbk sebelum periode arisan ini berakhir maka peserta tersebut diwajibkan untuk menginfokan ke admin untuk memberikan copy KTP dan deposit arisan sebanyak 2 bulan arisan sebagai jaminan yang akan digunakan sebagai pembayaran 2 periode terakhir arisan ini. (tidak berlaku terhadap peserta ex gmf yang telah menjadi anggota pada periode arisan sebelumnya dan pegawai GMF yang sedang ditugaskan ke anak perusahaan). <em>(Contoh: Misal D ikut 3 akun arisan, per bulan IDR 3.000.000 maka deposit 2 bulan adalah sebesar IDR 6.000.000).</em></li>
+        <li>Apabila terjadi hal-hal yang belum disebutkan di T&amp;C ini, maka akan dilakukan musyawarah dengan seluruh peserta arisan untuk mendapatkan kesepakatan bersama.</li>
+      </ol>
+    </div>
+
+    <input type="checkbox" id="agreeCheck">
+    <label for="agreeCheck" class="agree-wrap">
+      <div class="agree-inner">
+        <div class="chkbox">
+          <svg width="12" height="9" viewBox="0 0 12 9" fill="none">
+            <path d="M1 4L4.5 7.5L11 1" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="agree-text">
+          <strong>Pernyataan Persetujuan *</strong>
+          Saya yang bertandatangan di bawah ini sudah membaca dan memahami dengan jelas T&amp;C Arisan dan setuju untuk mengikuti arisan hingga periode arisan ini berakhir sesuai T&amp;C yang telah disebutkan.
+        </div>
+      </div>
+    </label>
+    <div class="ferr" id="agreeErr" style="padding:4px 0;">Anda harus menyetujui T&amp;C untuk melanjutkan.</div>
+
+    <div class="sec" style="margin-top:28px;"><div class="sec-d">$</div><div class="sec-lbl">Tanda Tangan</div><div class="sec-line"></div></div>
+
+    <div class="field" id="f-ttd">
+      <label>Tanda Tangan Digital <span class="req">*</span></label>
+      <div class="spw" id="sigWrap">
+        <canvas id="sigCanvas"></canvas>
+        <div class="shint" id="sigHint">Tanda tangan di sini...</div>
+      </div>
+      <div class="stb">
+        <span>$ Gunakan mouse atau sentuh layar $</span>
+        <button type="button" class="scl" onclick="clearSig()">&#8635; Ulangi</button>
+      </div>
+      <div class="ferr" id="sigErr">Tanda tangan wajib dibuat.</div>
+    </div>
+
+  </div>
+  <button class="btn-sub" id="submitBtn" onclick="handleSubmit()">Generate PDF &amp; Simpan Data</button>
+  </div>
+  </div>
+</div>
+
+<!-- ADMIN FAB -->
+<button class="fab" onclick="openAdmin()">
+  <span>$ Data Peserta</span>
+  <span class="badge" id="entryBadge">0</span>
+</button>
+
+<!-- ADMIN MODAL -->
+<div class="overlay" id="adminOverlay" onclick="if(event.target===this)closeAdmin()">
+  <div class="modal">
+    <div class="mhdr">
+      <div>
+        <h2>$ Data Peserta — Arisan Kaya Raya YTTA Jilid 6</h2>
+        <div class="cnt" id="adminCnt"></div>
+      </div>
+      <button class="mcl" onclick="closeAdmin()">&#x2715;</button>
+    </div>
+    <div class="mact">
+      <button class="bxl" onclick="exportExcelWithPassword()">&#x2B07; Export ke Excel (.xlsx)</button>
+      <button class="bdel" onclick="clearData()">&#x1F5D1; Hapus Semua Data</button>
+    </div>
+    <div class="tw"><div id="adminTable"></div></div>
+  </div>
+</div>
+
+<script>
+// floating $
+(function(){
+  const bg=document.getElementById('fbg');
+  const sym=['$','$','$$','$','$$$','$','$$'];
+  for(let i=0;i<30;i++){
+    const s=document.createElement('span');
+    s.textContent=sym[Math.floor(Math.random()*sym.length)];
+    const sz=14+Math.random()*44;
+    s.style.cssText='left:'+Math.random()*100+'%;bottom:'+(-(10+Math.random()*20))+'%;font-size:'+sz+'px;animation-duration:'+(8+Math.random()*14)+'s;animation-delay:'+(Math.random()*12)+'s;';
+    bg.appendChild(s);
+  }
+})();
+
+// sig pad
+var sigDraw=false,sigHas=false,sigReady=false;
+
+function initSig(){
+  var cv=document.getElementById('sigCanvas');
+  var wp=document.getElementById('sigWrap');
+  var dpr=window.devicePixelRatio||1;
+  var w=wp.offsetWidth||wp.clientWidth||600;
+  cv.width=w*dpr;
+  cv.height=160*dpr;
+  cv.style.width=w+'px';
+  cv.style.height='160px';
+  var ctx=cv.getContext('2d');
+  ctx.setTransform(1,0,0,1,0,0);
+  ctx.scale(dpr,dpr);
+  sigReady=true;
+}
+
+function pt(cv,e){
+  var r=cv.getBoundingClientRect();
+  var s=e.touches?e.touches[0]:e;
+  return{x:s.clientX-r.left,y:s.clientY-r.top};
+}
+
+function bindSig(){
+  var cv=document.getElementById('sigCanvas');
+  cv.addEventListener('mousedown',function(e){
+    e.preventDefault();
+    if(!sigReady)initSig();
+    sigDraw=true;
+    var ctx=cv.getContext('2d'),p=pt(cv,e);
+    ctx.beginPath();ctx.moveTo(p.x,p.y);
+    document.getElementById('sigHint').style.display='none';
+  });
+  cv.addEventListener('mousemove',function(e){
+    if(!sigDraw)return;e.preventDefault();
+    var ctx=cv.getContext('2d');
+    ctx.strokeStyle='#060F08';ctx.lineWidth=2.2;ctx.lineCap='round';ctx.lineJoin='round';
+    var p=pt(cv,e);ctx.lineTo(p.x,p.y);ctx.stroke();ctx.beginPath();ctx.moveTo(p.x,p.y);
+    sigHas=true;
+    document.getElementById('sigErr').style.display='none';
+    document.getElementById('f-ttd').classList.remove('has-error');
+  });
+  cv.addEventListener('mouseup',function(){sigDraw=false;});
+  cv.addEventListener('mouseleave',function(){sigDraw=false;});
+  cv.addEventListener('touchstart',function(e){
+    e.preventDefault();
+    if(!sigReady)initSig();
+    sigDraw=true;
+    var ctx=cv.getContext('2d'),p=pt(cv,e);
+    ctx.beginPath();ctx.moveTo(p.x,p.y);
+    document.getElementById('sigHint').style.display='none';
+  },{passive:false});
+  cv.addEventListener('touchmove',function(e){
+    if(!sigDraw)return;e.preventDefault();
+    var ctx=cv.getContext('2d');
+    ctx.strokeStyle='#060F08';ctx.lineWidth=2.2;ctx.lineCap='round';ctx.lineJoin='round';
+    var p=pt(cv,e);ctx.lineTo(p.x,p.y);ctx.stroke();ctx.beginPath();ctx.moveTo(p.x,p.y);
+    sigHas=true;
+  },{passive:false});
+  cv.addEventListener('touchend',function(){sigDraw=false;});
+}
+
+function clearSig(){
+  var cv=document.getElementById('sigCanvas');
+  cv.getContext('2d').clearRect(0,0,cv.width,cv.height);
+  sigHas=false;
+  document.getElementById('sigHint').style.display='block';
+}
+
+function getSig(){return document.getElementById('sigCanvas').toDataURL('image/png');}
+
+window.addEventListener('load',function(){
+  initSig();
+  bindSig();
+  if(window.ResizeObserver){
+    new ResizeObserver(function(){if(!sigHas)initSig();}).observe(document.getElementById('sigWrap'));
+  }
+});
+
+// validation
+function validate(){
+  var ok=true;
+  [['nama','f-nama'],['unit','f-unit'],['nohp','f-nohp'],['alamat','f-alamat'],['namaWali','f-namaWali'],['hpWali','f-hpWali']].forEach(function(pair){
+    var el=document.getElementById(pair[0]),wr=document.getElementById(pair[1]);
+    if(!el.value.trim()){wr.classList.add('has-error');el.classList.add('err');ok=false;}
+    else{wr.classList.remove('has-error');el.classList.remove('err');}
+  });
+  var chk=document.getElementById('agreeCheck').checked;
+  document.getElementById('agreeErr').style.display=chk?'none':'block';
+  if(!chk)ok=false;
+  if(!sigHas){
+    document.getElementById('sigErr').style.display='block';
+    document.getElementById('f-ttd').classList.add('has-error');
+    ok=false;
+  } else {
+    document.getElementById('sigErr').style.display='none';
+    document.getElementById('f-ttd').classList.remove('has-error');
+  }
+  return ok;
+}
+
+// storage
+var KEY='arisan_kaya_raya_jilid6';
+function getE(){try{return JSON.parse(localStorage.getItem(KEY)||'[]');}catch(e){return[];}}
+function saveE(e){var a=getE();a.push(e);localStorage.setItem(KEY,JSON.stringify(a));updateBadge();}
+function updateBadge(){document.getElementById('entryBadge').textContent=getE().length;}
+
+// google sheets
+var SHEET_URL='https://script.google.com/macros/s/AKfycbxZLbTAWpvi_mQ0WfSbnlZkTZ4iId_unTbdVCsgJBPhnf6mJGiQEST7K8OH-7aDHeuT/exec';
+function sendToSheet(entry){
+  if(!SHEET_URL||SHEET_URL==='PASTE_URL_DISINI')return;
+  try{
+    fetch(SHEET_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(entry)});
+  }catch(err){console.warn('Sheet error:',err);}
+}
+
+// password
+var EXCEL_PASSWORD='arisan2026';
+function exportExcelWithPassword(){
+  document.getElementById('pwInput').value='';
+  document.getElementById('pwInput').classList.remove('pw-err');
+  document.getElementById('pwError').classList.remove('show');
+  document.getElementById('pwOverlay').classList.add('open');
+  setTimeout(function(){document.getElementById('pwInput').focus();},100);
+}
+function closePw(){document.getElementById('pwOverlay').classList.remove('open');}
+function togglePw(){
+  var inp=document.getElementById('pwInput'),btn=document.getElementById('pwToggleBtn');
+  if(inp.type==='password'){inp.type='text';btn.textContent='🙈';}
+  else{inp.type='password';btn.textContent='👁';}
+}
+function checkPw(){
+  var val=document.getElementById('pwInput').value;
+  if(val===EXCEL_PASSWORD){closePw();exportExcel();}
+  else{
+    document.getElementById('pwInput').classList.add('pw-err');
+    document.getElementById('pwError').classList.add('show');
+    document.getElementById('pwInput').value='';
+    document.getElementById('pwInput').focus();
+  }
+}
+
+// admin
+function openAdmin(){renderTable();document.getElementById('adminOverlay').classList.add('open');}
+function closeAdmin(){document.getElementById('adminOverlay').classList.remove('open');}
+function renderTable(){
+  var entries=getE(),el=document.getElementById('adminTable');
+  document.getElementById('adminCnt').textContent=entries.length+' peserta terdaftar';
+  if(!entries.length){el.innerHTML='<div class="empty">$ Belum ada data peserta $</div>';return;}
+  var h='<table class="dt"><thead><tr><th>#</th><th>Tanggal</th><th>Nama</th><th>Unit</th><th>No HP</th><th>Alamat</th><th>Nama Wali</th><th>HP Wali</th><th>Alamat Wali</th></tr></thead><tbody>';
+  entries.forEach(function(e,i){
+    h+='<tr><td style="color:#4A9A54;font-size:10px">'+(i+1)+'</td><td style="font-size:10px;white-space:nowrap">'+e.tanggal+'</td><td><strong>'+e.nama+'</strong></td><td>'+e.unit+'</td><td>'+e.nohp+'</td><td style="font-size:11px;max-width:130px">'+e.alamat+'</td><td>'+e.namaWali+'</td><td>'+e.hpWali+'</td><td style="font-size:11px;max-width:130px">'+(e.alamatWali||'<em style="color:#aaa">—</em>')+'</td></tr>';
+  });
+  el.innerHTML=h+'</tbody></table>';
+}
+function clearData(){
+  if(!confirm('Hapus semua '+getE().length+' data?'))return;
+  localStorage.removeItem(KEY);updateBadge();renderTable();
+}
+function exportExcel(){
+  var entries=getE();
+  if(!entries.length){alert('Belum ada data.');return;}
+  var rows=entries.map(function(e,i){return{'No':i+1,'Tanggal Daftar':e.tanggal,'Nama':e.nama,'Unit':e.unit,'No HP':e.nohp,'Alamat':e.alamat,'Nama Wali & Status':e.namaWali,'No HP Wali':e.hpWali,'Alamat Wali':e.alamatWali||'','Setuju T&C':'Ya'};});
+  var ws=XLSX.utils.json_to_sheet(rows);
+  ws['!cols']=[{wch:4},{wch:22},{wch:28},{wch:16},{wch:16},{wch:32},{wch:30},{wch:16},{wch:32},{wch:10}];
+  var wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,ws,'Peserta Arisan');
+  var now=new Date(),stamp=now.getFullYear()+String(now.getMonth()+1).padStart(2,'0')+String(now.getDate()).padStart(2,'0');
+  XLSX.writeFile(wb,'DataPeserta_ArisanKayaRaya_Jilid6_'+stamp+'.xlsx');
+}
+
+// submit
+var pdfData=null;
+function handleSubmit(){
+  if(!validate())return;
+  var btn=document.getElementById('submitBtn');
+  btn.disabled=true;btn.textContent='$ Generating...';
+  setTimeout(function(){
+    var now=new Date();
+    var tanggal=now.toLocaleString('id-ID',{day:'numeric',month:'long',year:'numeric',hour:'2-digit',minute:'2-digit'});
+    var entry={tanggal:tanggal,nama:document.getElementById('nama').value.trim(),unit:document.getElementById('unit').value.trim(),nohp:document.getElementById('nohp').value.trim(),alamat:document.getElementById('alamat').value.trim(),namaWali:document.getElementById('namaWali').value.trim(),hpWali:document.getElementById('hpWali').value.trim(),alamatWali:document.getElementById('alamatWali').value.trim()};
+    saveE(entry);
+    sendToSheet(entry);
+    generatePDF(entry);
+    document.getElementById('fContent').style.display='none';
+    document.getElementById('succPanel').classList.add('show');
+    document.getElementById('dlBtn').onclick=function(){pdfData.save('Form_ArisanKayaRaya_Jilid6_'+entry.nama.replace(/\s+/g,'_')+'.pdf');};
+    btn.disabled=false;btn.textContent='Generate PDF & Simpan Data';
+  },400);
+}
+
+function resetForm(){
+  document.getElementById('fContent').style.display='block';
+  document.getElementById('succPanel').classList.remove('show');
+  ['nama','unit','nohp','alamat','namaWali','hpWali','alamatWali'].forEach(function(id){document.getElementById(id).value='';});
+  document.getElementById('agreeCheck').checked=false;
+  clearSig();
+}
+
+// PDF
+function generatePDF(d){
+  var jsPDF=window.jspdf.jsPDF;
+  var doc=new jsPDF({unit:'mm',format:'a4'});
+  var pw=210,ph=297,ml=18,mr=18,cw=174;
+  var y=18;
+
+  doc.setFillColor(6,15,8);doc.rect(0,0,pw,44,'F');
+  doc.setFillColor(26,122,46);doc.rect(0,44,pw,1.5,'F');
+  doc.setFont('times','bold');doc.setFontSize(9);doc.setTextColor(22,61,28);
+  doc.text('$  $  $  $  $  $  $  $  $  $  $  $  $  $  $  $  $  $  $',pw/2,8,{align:'center'});
+  doc.setFontSize(7);doc.setTextColor(74,154,84);
+  doc.text('FORMULIR KEIKUTSERTAAN',pw/2,16,{align:'center',charSpace:3});
+  doc.setFont('times','bold');doc.setFontSize(17);doc.setTextColor(232,255,240);
+  doc.text('Arisan Kaya Raya YTTA Jilid 6',pw/2,27,{align:'center'});
+  doc.setFont('times','italic');doc.setFontSize(8);doc.setTextColor(133,201,138);
+  doc.text('PT GMF AeroAsia Tbk  ·  April 2026 – November 2027',pw/2,35,{align:'center'});
+  doc.setFont('times','bold');doc.setFontSize(9);doc.setTextColor(22,61,28);
+  doc.text('$  $  $  $  $  $  $  $  $  $  $  $  $  $  $  $  $  $  $',pw/2,42,{align:'center'});
+  y=54;
+
+  function newPage(){doc.addPage();y=18;doc.setFillColor(6,15,8);doc.rect(0,0,pw,14,'F');doc.setFillColor(26,122,46);doc.rect(0,14,pw,1,'F');doc.setFont('times','bold');doc.setFontSize(7);doc.setTextColor(74,154,84);doc.text('$ Arisan Kaya Raya YTTA Jilid 6  (lanjutan) $',pw/2,9,{align:'center'});y=22;}
+  function secHdr(lbl){y+=2;doc.setFillColor(232,255,240);doc.rect(ml,y,cw,8,'F');doc.setFillColor(26,122,46);doc.rect(ml,y,2.5,8,'F');doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(13,74,26);doc.text('$ '+lbl.toUpperCase(),ml+6,y+5.5,{charSpace:0.8});y+=12;}
+  function fRow(lbl,val){
+    var txt=val||'-';
+    var lines=doc.splitTextToSize(txt,cw-2);
+    var bh=Math.max(13,lines.length*5+8);
+    if(y+bh>ph-22)newPage();
+    doc.setFont('helvetica','normal');doc.setFontSize(7);doc.setTextColor(30,92,40);doc.text(lbl.toUpperCase(),ml,y,{charSpace:0.8});
+    y+=5;doc.setFont('times','normal');doc.setFontSize(12);doc.setTextColor(6,15,8);doc.text(lines,ml,y);
+    var lh=lines.length*5;
+    doc.setDrawColor(158,212,168);doc.setLineWidth(0.3);doc.line(ml,y+lh,ml+cw,y+lh);y+=lh+5;
+  }
+
+  secHdr('Data Diri Peserta');
+  fRow('Nama Lengkap',d.nama);fRow('Unit / Bagian',d.unit);fRow('No. HP',d.nohp);fRow('Alamat',d.alamat);
+  secHdr('Data Anggota Keluarga / Wali');
+  fRow('Nama Wali & Status Hubungan',d.namaWali);fRow('Nomor HP Wali',d.hpWali);fRow('Alamat Wali',d.alamatWali||'(sama dengan peserta)');
+  y+=2;if(y+16>ph-22)newPage();
+  secHdr('Terms and Conditions');
+
+  var tnc=['Periode arisan akan berjalan selama periode April 2026 - November 2027 dengan ketentuan jumlah pembayaran IDR 1.000.000 per akun arisan dan jadwal pemenang sesuai dengan hasil yg telah disepakati pada saat penentuan jadwal arisan yang akan dilakukan secara online.','Peserta setuju untuk tidak dapat berhenti ditengah periode arisan. Apabila terjadi hal-hal yang tidak bisa dihindari seperti meninggal, cacat tidak bisa bekerja, sakit hingga tidak sadar dll, maka peserta setuju untuk mengalihkan arisan ini kepada anggota keluarga yang telah ditunjuk sebagai wali untuk membahas kelanjutan arisan ini, dan anggota keluarga yang ditunjuk sudah dianggap terinformasi dan paham atas T&C yang telah disepakati pada arisan ini.','Deadline transfer arisan ke akun admin 1 an Chintya Widyaning Putri Utami BNI 0239667122 adalah H+1 dari Gajian PT GMF AeroAsia Tbk dengan mengirimkan bukti transfer ke WA grup. Admin akan memberikan reminder apabila jumlah yang belum transfer arisan sebelum deadline transfer < 6 orang.','Deadline transfer arisan kepada pemenang selambat-lambatnya H+2 dari tanggal Gajian PT GMF AeroAsia Tbk dan admin akan mengkonfirmasi no.rek transfer kepada masing-masing pemenang.','Apabila ada perubahan jadwal pemenang, diperbolehkan asal disetujui oleh kedua belah pihak. (Contoh: A dijadwalkan menang pada bulan September 2026, B dijadwalkan menang pada bulan Januari 2027 apabila B ingin menukar jadwal untuk menang arisan dengan A maka dapat disepakati dengan A dan diinfokan ke admin.)','Apabila transfer pemenang arisan diluar rekening BNI maka terdapat potongan biaya admin dengan estimasi IDR 2.500 - IDR 6.500 (tergantung ada BIFAST, atau tidak) dan akan diinfokan kepada pemenang bulan berjalan sebelum uang ditransfer. (1 Bulan 4 Pemenang, @IDR 20.000.000)','Apabila ada peserta yang resign dari PT GMF AeroAsia Tbk sebelum periode arisan ini berakhir maka peserta tersebut diwajibkan untuk menginfokan ke admin untuk memberikan copy KTP dan deposit arisan sebanyak 2 bulan arisan sebagai jaminan. (tidak berlaku terhadap peserta ex gmf yang telah menjadi anggota pada periode arisan sebelumnya dan pegawai GMF yang sedang ditugaskan ke anak perusahaan). (Contoh: Misal D ikut 3 akun arisan, per bulan IDR 3.000.000 maka deposit 2 bulan adalah sebesar IDR 6.000.000).','Apabila terjadi hal-hal yang belum disebutkan di T&C ini, maka akan dilakukan musyawarah dengan seluruh peserta arisan untuk mendapatkan kesepakatan bersama.'];
+
+  tnc.forEach(function(item,i){
+    var lines=doc.splitTextToSize((i+1)+'. '+item,cw-4);
+    var bh=lines.length*4.5+4;
+    if(y+bh>ph-22)newPage();
+    if(i%2===0){doc.setFillColor(240,251,242);doc.rect(ml,y,cw,bh,'F');}
+    doc.setFont('helvetica','normal');doc.setFontSize(7.8);doc.setTextColor(10,40,14);
+    doc.text(lines,ml+2,y+4);y+=bh;
+  });
+
+  y+=6;if(y+28>ph-22)newPage();
+  doc.setFillColor(220,245,226);doc.rect(ml,y,cw,24,'F');
+  doc.setDrawColor(26,122,46);doc.setLineWidth(0.5);doc.rect(ml,y,cw,24);
+  doc.setFont('helvetica','bold');doc.setFontSize(7);doc.setTextColor(13,74,26);
+  doc.text('$ PERNYATAAN PERSETUJUAN $',pw/2,y+7,{align:'center',charSpace:1.5});
+  doc.setFont('times','italic');doc.setFontSize(8.5);doc.setTextColor(6,15,8);
+  var al=doc.splitTextToSize('Saya yang bertandatangan di bawah ini sudah membaca dan memahami dengan jelas T&C Arisan Kaya Raya YTTA Jilid 6 dan setuju untuk mengikuti arisan hingga periode arisan ini berakhir sesuai T&C yang telah disebutkan.',cw-20);
+  doc.text(al,pw/2,y+14,{align:'center'});y+=30;
+
+  if(y+64>ph-18)newPage();y+=4;
+  var tgl=new Date().toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'});
+  doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(30,92,40);
+  doc.text('Jakarta, '+tgl,ml+cw,y,{align:'right'});y+=10;
+
+  var sx=pw/2-42,sw=84;
+  doc.setFillColor(240,251,242);doc.rect(sx,y,sw,36,'F');
+  doc.setDrawColor(26,122,46);doc.setLineWidth(0.4);doc.rect(sx,y,sw,36);
+  doc.setFont('times','bold');doc.setFontSize(9);doc.setTextColor(158,212,168);
+  doc.text('$',sx+3,y+6);doc.text('$',sx+sw-6,y+6);doc.text('$',sx+3,y+33);doc.text('$',sx+sw-6,y+33);
+  try{if(sigHas){doc.addImage(getSig(),'PNG',sx+3,y+3,sw-6,30);}}catch(e){}
+  y+=40;
+  doc.setDrawColor(26,122,46);doc.setLineWidth(0.5);doc.line(sx,y,sx+sw,y);y+=5;
+  doc.setFont('times','bold');doc.setFontSize(11);doc.setTextColor(6,15,8);doc.text(d.nama,sx+sw/2,y,{align:'center'});y+=5;
+  doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(30,92,40);doc.text(d.unit,sx+sw/2,y,{align:'center'});
+
+  var tp=doc.getNumberOfPages();
+  for(var i=1;i<=tp;i++){
+    doc.setPage(i);
+    doc.setFillColor(6,15,8);doc.rect(0,ph-11,pw,11,'F');
+    doc.setFillColor(13,74,26);doc.rect(0,ph-11,pw,1,'F');
+    doc.setFont('helvetica','normal');doc.setFontSize(6.5);doc.setTextColor(74,154,84);
+    doc.text('$ Arisan Kaya Raya YTTA Jilid 6  ·  Dokumen Rahasia  ·  Harap Ditandatangani & Dikembalikan ke Admin $',pw/2,ph-4.5,{align:'center'});
+    doc.setTextColor(30,92,40);doc.text(i+' / '+tp,pw-mr,ph-4.5,{align:'right'});
+  }
+  pdfData=doc;
+}
+
+updateBadge();
+</script>
+
+<!-- PASSWORD MODAL -->
+<div class="pw-overlay" id="pwOverlay" onclick="if(event.target===this)closePw()">
+  <div class="pw-box">
+    <div class="pw-icon">🔐</div>
+    <h3>Masukkan Password</h3>
+    <p>File Excel dilindungi password.<br>Hubungi admin untuk mendapatkan akses.</p>
+    <div class="pw-input-wrap">
+      <input type="password" id="pwInput" placeholder="Password..." onkeydown="if(event.key==='Enter')checkPw()">
+      <button class="pw-toggle" onclick="togglePw()" id="pwToggleBtn">👁</button>
+    </div>
+    <div class="pw-error" id="pwError">Password salah. Coba lagi.</div>
+    <div class="pw-btns">
+      <button class="pw-cancel" onclick="closePw()">Batal</button>
+      <button class="pw-ok" onclick="checkPw()">$ Konfirmasi</button>
+    </div>
+  </div>
+</div>
+</body>
+</html>
