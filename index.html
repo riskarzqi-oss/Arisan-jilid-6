@@ -343,12 +343,21 @@ let sigDraw=false,sigHas=false;
 function initSig(){
   const cv=document.getElementById('sigCanvas'),wp=document.getElementById('sigWrap');
   const dpr=window.devicePixelRatio||1;
-  const r=wp.getBoundingClientRect();
-  cv.width=r.width*dpr;cv.height=160*dpr;
-  cv.getContext('2d').scale(dpr,dpr);
+  let ready=false;
+  function setSize(){
+    const w=wp.offsetWidth||wp.clientWidth||640;
+    cv.width=w*dpr;cv.height=160*dpr;
+    cv.style.width=w+'px';cv.style.height='160px';
+    const ctx=cv.getContext('2d');ctx.setTransform(1,0,0,1,0,0);ctx.scale(dpr,dpr);
+    ready=true;
+  }
+  setSize();
+  if(window.ResizeObserver){
+    new ResizeObserver(()=>{if(!sigHas)setSize();}).observe(wp);
+  }
 
   function pt(e){const r=cv.getBoundingClientRect(),s=e.touches?e.touches[0]:e;return{x:s.clientX-r.left,y:s.clientY-r.top};}
-  function sd(e){e.preventDefault();sigDraw=true;const ctx=cv.getContext('2d'),p=pt(e);ctx.beginPath();ctx.moveTo(p.x,p.y);document.getElementById('sigHint').style.display='none';}
+  function sd(e){e.preventDefault();if(!ready)setSize();sigDraw=true;const ctx=cv.getContext('2d'),p=pt(e);ctx.beginPath();ctx.moveTo(p.x,p.y);document.getElementById('sigHint').style.display='none';}
   function dr(e){
     if(!sigDraw)return;e.preventDefault();
     const ctx=cv.getContext('2d');ctx.strokeStyle='#060F08';ctx.lineWidth=2.2;ctx.lineCap='round';ctx.lineJoin='round';
@@ -361,6 +370,7 @@ function initSig(){
 }
 function clearSig(){const cv=document.getElementById('sigCanvas');cv.getContext('2d').clearRect(0,0,cv.width,cv.height);sigHas=false;document.getElementById('sigHint').style.display='block';}
 function getSig(){return document.getElementById('sigCanvas').toDataURL('image/png');}
+document.addEventListener('DOMContentLoaded',initSig);
 window.addEventListener('load',initSig);
 
 // validation
@@ -382,7 +392,18 @@ function validate(){
 // storage
 const KEY='arisan_kaya_raya_jilid6';
 function getE(){try{return JSON.parse(localStorage.getItem(KEY)||'[]');}catch{return[];}}
-function saveE(e){const a=getE();a.push(e);localStorage.setItem(KEY,JSON.stringify(a));
+function saveE(e){const a=getE();a.push(e);localStorage.setItem(KEY,JSON.stringify(a));updateBadge();}
+
+// Google Sheets URL - isi setelah setup Apps Script
+var SHEET_URL = 'https://script.google.com/macros/s/AKfycbxZLbTAWpvi_mQ0WfSbnlZkTZ4iId_unTbdVCsgJBPhnf6mJGiQEST7K8OH-7aDHeuT/exec';
+
+async function sendToSheet(entry){
+  if(!SHEET_URL || SHEET_URL==='PASTE_URL_DISINI') return;
+  try{
+    await fetch(SHEET_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(entry)});
+  }catch(err){ console.warn('Gagal kirim ke Sheet:', err); }
+}
+
 // ── Password for Excel export ──
 const EXCEL_PASSWORD = 'arisan2026'; // <-- GANTI PASSWORD DI SINI
 
@@ -420,7 +441,7 @@ function checkPw(){
   }
 }
 
-updateBadge();}
+updateBadge();
 function updateBadge(){document.getElementById('entryBadge').textContent=getE().length;}
 
 // admin
@@ -500,7 +521,9 @@ function handleSubmit(){
     const now=new Date();
     const tanggal=now.toLocaleString('id-ID',{day:'numeric',month:'long',year:'numeric',hour:'2-digit',minute:'2-digit'});
     const entry={tanggal,nama:document.getElementById('nama').value.trim(),unit:document.getElementById('unit').value.trim(),nohp:document.getElementById('nohp').value.trim(),alamat:document.getElementById('alamat').value.trim(),namaWali:document.getElementById('namaWali').value.trim(),hpWali:document.getElementById('hpWali').value.trim(),alamatWali:document.getElementById('alamatWali').value.trim()};
-    saveE(entry);generatePDF(entry);
+    saveE(entry);
+    sendToSheet(entry);
+    generatePDF(entry);
     document.getElementById('fContent').style.display='none';
     document.getElementById('succPanel').classList.add('show');
     document.getElementById('dlBtn').onclick=()=>pdfData.save('Form_ArisanKayaRaya_Jilid6_'+entry.nama.replace(/\s+/g,'_')+'.pdf');
